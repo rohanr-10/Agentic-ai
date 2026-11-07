@@ -1,0 +1,26 @@
+[project]
+name = "agentic-platform-backend"
+version = "0.1.0"
+description = "Production-grade backend for a conversational / autonomous agentic AI platform"
+requires-python = ">=3.11"
+readme = "README.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+markers = [
+    "unit: fast isolated tests",
+    "integration: full application + real SQLite + storage",
+    "security: abuse and isolation tests",
+    "concurrency: parallel-execution invariants",
+    "recovery: crash / interruption recovery",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

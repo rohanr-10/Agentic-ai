@@ -1,0 +1,39 @@
+﻿# Environment secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Python
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.egg-info/
+
+# Local databases and runtime data
+**/data/
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*.db-wal
+**/*.db-shm
+
+# Node
+**/node_modules/
+**/dist/
+**/coverage/
+
+# Build and cache files
+**/*.tsbuildinfo
+**/.vite/
+**/.mypy_cache/
+
+# Logs and local files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

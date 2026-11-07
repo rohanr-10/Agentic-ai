@@ -1,0 +1,44 @@
+# syntax=docker/dockerfile:1
+# ---------------------------------------------------------------------------
+# Agentic Platform Backend - background worker image
+# Same base as the API image; runs the durable job loop (task execution,
+# file extraction, maintenance) instead of the HTTP server.
+# ---------------------------------------------------------------------------
+FROM python:3.12-slim AS builder
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /build
+COPY requirements.txt ./
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.12-slim AS runtime
+
+RUN groupadd --system --gid 1001 app \
+    && useradd --system --uid 1001 --gid app --create-home app
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+COPY --from=builder /opt/venv /opt/venv
+WORKDIR /srv/app
+
+COPY alembic.ini ./
+COPY alembic ./alembic
+COPY app ./app
+
+RUN chown -R app:app /srv/app
+USER app
+
+RUN mkdir -p /srv/app/data/storage /srv/app/data/sandboxes
+
+# Workers run tools in the local sandbox by default.  For container-isolated
+# tool execution mount /var/run/docker.sock and set AGP_SANDBOX_BACKEND=docker
+# (see docs/DEPLOYMENT_CLOUD.md for the isolation trade-offs).
+ENV AGP_STORAGE_LOCAL_ROOT=/srv/app/data/storage \
+    AGP_SANDBOX_ROOT=/srv/app/data/sandboxes
+
+CMD ["python", "-m", "app.worker"]

@@ -1,0 +1,13 @@
+# Optional cloud / observability extras.
+# The application degrades gracefully when these are absent:
+#  - boto3           -> S3 storage backend (needed only when AGP_STORAGE_BACKEND=s3)
+#  - opentelemetry*  -> distributed tracing (needed only when AGP_OTEL_ENABLED=true)
+#
+# Install only with an index that carries the OTel beta wheels:
+#   pip install -r requirements-cloud.txt
+boto3
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-sqlalchemy
+opentelemetry-exporter-otlp-proto-http
